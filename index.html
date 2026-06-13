@@ -6,6 +6,7 @@
   <title>AssembLeia — Acompanha o parlamento português</title>
   <meta name="description" content="AssembLeia é uma app não oficial para seguir a Assembleia da República: iniciativas, votações, deputados e partidos. Dados do portal de dados abertos do Parlamento.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="icon.png" type="image/png">
   <link rel="apple-touch-icon" href="icon.png">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -31,7 +32,10 @@
   <main>
     <section class="hero">
       <div class="container">
-        <img src="icon.png" alt="AssembLeia" class="hero-icon" width="116" height="116">
+        <picture>
+          <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)">
+          <img src="icon.png" alt="AssembLeia" class="hero-icon" width="116" height="116">
+        </picture>
         <p class="tagline">Os dados que interessam</p>
         <h1>AssembLeia</h1>
         <p class="lead">Acompanha o parlamento português — iniciativas, votações, deputados e partidos — no teu telemóvel.</p>
