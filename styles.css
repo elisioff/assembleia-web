@@ -135,6 +135,29 @@ p { margin: 0 0 1rem; }
 .btn-secondary:hover { background: var(--green-light); transform: translateY(-1px); }
 .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
+.btn-disabled {
+  background: transparent;
+  color: var(--muted);
+  border-color: var(--border);
+  cursor: default;
+}
+.btn-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--green-light);
+  color: var(--green-dark);
+}
+.btn-badge.badge-on-primary { background: rgba(255,255,255,0.22); color: #fff; }
+.cta-note {
+  margin-top: 14px;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
 .disclaimer-pill {
   display: inline-block;
   margin-top: 28px;
@@ -203,7 +226,7 @@ p { margin: 0 0 1rem; }
   scrollbar-color: var(--border) transparent;
   justify-content: center;
 }
-.phone-wrap { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.phone-wrap { flex: 0 0 auto; margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .phone-frame {
   width: 148px;
   aspect-ratio: 9 / 19.5;
@@ -211,42 +234,22 @@ p { margin: 0 0 1rem; }
   border-radius: 28px;
   overflow: hidden;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(160deg, #2d7236 0%, #1b5e20 100%);
-}
-.phone-notch {
-  position: absolute;
-  top: 0;
-  width: 42px;
-  height: 10px;
   background: #1c1c1e;
-  border-radius: 0 0 8px 8px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.16);
 }
-.phone-screen-icon {
-  width: 58px;
-  height: 58px;
-  border-radius: 13px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+.phone-frame picture { display: block; width: 100%; height: 100%; }
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
 }
 .phone-label {
   font-size: 0.84rem;
   color: var(--muted);
   text-align: center;
-}
-.coming-soon {
-  display: inline-block;
-  margin-top: 3px;
-  background: var(--green-light);
-  color: var(--green);
-  border: 1px solid rgba(45,114,54,0.25);
-  font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 2px 8px;
-  border-radius: 999px;
 }
 
 /* ---- Prose (privacy / support pages) ---- */
@@ -341,8 +344,8 @@ p { margin: 0 0 1rem; }
   .chip-red   { background: #2e1616; color: #e06060; }
   .chip-dark  { background: #3a3c3a; color: #f0f0ec; }
 
-  .phone-frame { border-color: #505052; }
-  .phone-notch { background: #505052; }
+  .phone-frame { border-color: #4a4a4c; background: #000; }
+  .btn-badge { background: rgba(94,203,106,0.18); color: #6dd677; }
 
   .site-footer { background: #161618; }
 }
