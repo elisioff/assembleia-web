@@ -177,6 +177,11 @@ p { margin: 0 0 1rem; }
   border-bottom: 1px solid var(--border);
 }
 
+/* Constrains prose width inside centered sections for comfortable reading */
+.measure { max-width: 46rem; margin: 0 auto; }
+.measure p:last-child { margin-bottom: 0; }
+.faq { text-align: left; }
+
 /* ---- Feature cards ---- */
 .grid {
   display: grid;
