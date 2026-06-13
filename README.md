@@ -42,7 +42,5 @@ add a `CNAME` file and configure DNS — no other changes needed.
 
 ## ⚠️ Placeholders to fill before going live
 
-- **Contact email** — `o-teu-email@exemplo.pt` appears in `privacidade.html`
-  and `suporte.html`. Replace both (and remove the "(endereço a confirmar)" note).
-- **Store links** — the App Store and Google Play buttons in `index.html` use
-  `href="#"`. Replace with the real store URLs once the apps are published.
+- **Google Play link** — the Google Play button in `index.html` uses `href="#"`.
+  Replace with the real store URL once the Android app is published.
