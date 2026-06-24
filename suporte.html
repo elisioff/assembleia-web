@@ -5,19 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Suporte - AssembLeia</title>
   <meta name="description" content="Ajuda e contacto para a app AssembLeia. Envia feedback pela app ou por email, e vê as perguntas frequentes.">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="icon" href="icon.png?v=2" type="image/png" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="icon-dark.png?v=2" type="image/png" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="site-header">
     <div class="container">
       <a class="brand" href="index.html">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M3 17 A9 9 0 0 1 21 17" style="stroke:var(--arc-green)" stroke-width="2.5" stroke-linecap="round"/>
-          <path d="M6 17 A6 6 0 0 1 18 17" style="stroke:var(--arc-gold)"  stroke-width="2.5" stroke-linecap="round"/>
-          <path d="M9 17 A3 3 0 0 1 15 17" style="stroke:var(--arc-red)"   stroke-width="2.5" stroke-linecap="round"/>
-        </svg>
+        <picture>
+          <source srcset="icon-dark.png?v=2" media="(prefers-color-scheme: dark)">
+          <img src="icon.png?v=2" alt="" class="brand-mark" width="28" height="28">
+        </picture>
         AssembLeia
       </a>
       <nav class="nav">
