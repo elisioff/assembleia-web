@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.elisioff.assembleia",
+      "sha256_cert_fingerprints": [
+        "59:79:EB:C8:50:E0:A0:47:FE:39:6C:8A:9D:90:E6:16:18:E2:36:72:80:69:06:E7:47:7E:D5:C9:01:6C:B6:37"
+      ]
+    }
+  }
+]

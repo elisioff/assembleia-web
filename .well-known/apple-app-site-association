@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["NUS8LWRM7Z.com.elisioff.AssembLeia"],
+        "components": [
+          { "/": "/i/*", "comment": "Initiative deep links" },
+          { "/": "/", "comment": "App home" }
+        ]
+      }
+    ]
+  }
+}
