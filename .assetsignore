@@ -1,0 +1,7 @@
+# Not site content — keep out of the deployed assets. (.well-known MUST stay served.)
+.git
+.gitignore
+.DS_Store
+worker.js
+wrangler.jsonc
+README.md
