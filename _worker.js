@@ -1,12 +1,12 @@
-// Cloudflare Pages Function for /iniciativa/:id.
+// Cloudflare Pages "advanced mode" Worker (a /functions directory is only
+// compiled by the Pages build pipeline, which this no-build project skips;
+// _worker.js is picked up in every deployment mode).
 //
-// Devices with the app never reach this (universal/app link opens the app).
-// For everyone else — including link crawlers (iMessage, WhatsApp, etc.),
-// which don't run JS — it serves iniciativa-app.html with the generic
-// preview tags rewritten to the actual initiative's title and summary.
-//
-// This replaces the old `_redirects` rewrite: redirects run BEFORE Functions
-// on Pages, so a `/iniciativa/*` rule there would prevent this from running.
+// /iniciativa/:id — devices with the app never reach this (universal/app link
+// opens the app). For everyone else — including link crawlers (iMessage,
+// WhatsApp, etc.), which don't run JS — it serves iniciativa-app.html with the
+// generic preview tags rewritten to the actual initiative's title and summary.
+// Everything else passes through to the static site.
 
 const SUPABASE_URL = "https://fnvtibybkxujurxrilfg.supabase.co";
 const SUPABASE_KEY = "sb_publishable_BAYxTO8BAW_WG1ng5zCnqg_uu8LqZDj";
@@ -15,13 +15,13 @@ const SITE_URL = "https://assembleiaapp.com";
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-// Pages' clean-URL handling answers asset fetches with a redirect for .html
-// paths, so follow one hop manually.
-async function fetchPage(context) {
-  let res = await context.env.ASSETS.fetch(new URL("/iniciativa-app.html", context.request.url));
+// The static layer answers .html paths with a clean-URL redirect, so follow
+// one hop manually.
+async function fetchPage(request, env) {
+  let res = await env.ASSETS.fetch(new URL("/iniciativa-app.html", request.url));
   if (res.status >= 300 && res.status < 400) {
     const location = res.headers.get("location");
-    if (location) res = await context.env.ASSETS.fetch(new URL(location, context.request.url));
+    if (location) res = await env.ASSETS.fetch(new URL(location, request.url));
   }
   return res;
 }
@@ -72,11 +72,10 @@ function injectPreview(html, it, id) {
     );
 }
 
-export async function onRequestGet(context) {
-  const page = await fetchPage(context);
+async function handleIniciativa(request, env, id) {
+  const page = await fetchPage(request, env);
   let html = await page.text();
 
-  const id = /^\d+$/.test(context.params.id) ? context.params.id : null;
   if (id) {
     try {
       const it = await fetchInitiative(id);
@@ -93,3 +92,15 @@ export async function onRequestGet(context) {
     },
   });
 }
+
+export default {
+  async fetch(request, env) {
+    const { pathname } = new URL(request.url);
+    const match = pathname.match(/^\/iniciativa\/([^/]+)\/?$/);
+    if (match && (request.method === "GET" || request.method === "HEAD")) {
+      const id = /^\d+$/.test(match[1]) ? match[1] : null;
+      return handleIniciativa(request, env, id);
+    }
+    return env.ASSETS.fetch(request);
+  },
+};

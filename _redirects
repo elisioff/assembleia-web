@@ -1,3 +1,2 @@
-# /iniciativa/:id is handled by functions/iniciativa/[id].js (per-initiative
-# link previews). Don't add a rule for it here: _redirects runs before Pages
-# Functions, so a rewrite would keep the function from ever being invoked.
+# /iniciativa/:id is handled by _worker.js (per-initiative link previews).
+# Don't add a rule for it here: redirects would run in front of the Worker.
