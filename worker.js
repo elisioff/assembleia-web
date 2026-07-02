@@ -23,9 +23,9 @@ async function fetchPage(request, env) {
   return res;
 }
 
-async function fetchInitiative(id) {
+async function fetchInitiative(id, select = "titulo,tipo,resultado,summary") {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/iniciativas?id=eq.${id}&select=titulo,tipo,resultado,summary`,
+    `${SUPABASE_URL}/rest/v1/iniciativas?id=eq.${id}&select=${select}`,
     { headers: { apikey: SUPABASE_KEY } }
   );
   if (!res.ok) return null;
@@ -90,13 +90,33 @@ async function handleIniciativa(request, env, id) {
   });
 }
 
+// /iniciativa/:id/documento — devices with the app open the PDF reader over the
+// initiative; everyone else is redirected to the document itself.
+async function handleDocumento(request, env, id) {
+  if (id) {
+    try {
+      const it = await fetchInitiative(id, "documento_path,link_texto");
+      if (it && it.documento_path) {
+        return Response.redirect(
+          `${SUPABASE_URL}/storage/v1/object/public/documentos-iniciativas/${it.documento_path}`,
+          302
+        );
+      }
+      if (it && it.link_texto) return Response.redirect(it.link_texto, 302);
+    } catch {
+      // Supabase hiccup: fall through to the initiative page below.
+    }
+  }
+  return handleIniciativa(request, env, id);
+}
+
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
-    const match = pathname.match(/^\/iniciativa\/([^/]+)\/?$/);
+    const match = pathname.match(/^\/iniciativa\/([^/]+)(\/documento)?\/?$/);
     if (match && (request.method === "GET" || request.method === "HEAD")) {
       const id = /^\d+$/.test(match[1]) ? match[1] : null;
-      return handleIniciativa(request, env, id);
+      return match[2] ? handleDocumento(request, env, id) : handleIniciativa(request, env, id);
     }
     return env.ASSETS.fetch(request);
   },
