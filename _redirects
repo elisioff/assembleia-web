@@ -1,2 +1,6 @@
-# /iniciativa/:id is handled by _worker.js (per-initiative link previews).
-# Don't add a rule for it here: redirects would run in front of the Worker.
+# Devices with the app open /iniciativa/:id directly (universal/app link) and never
+# hit this. Everyone else gets the landing page, which loads the initiative and
+# points to the stores. 200 = rewrite (keeps the URL so the page can read the id).
+# The worker (worker.js, run_worker_first) normally handles /iniciativa/* before
+# assets; this rule is the fallback if the worker isn't attached.
+/iniciativa/*  /iniciativa-app  200
