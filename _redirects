@@ -1,4 +1,4 @@
 # Devices with the app open /iniciativa/:id directly (universal/app link) and never
 # hit this. Everyone else gets the landing page below, which loads the initiative and
 # points to the stores. 200 = rewrite (keeps the URL so the page can read the id).
-/iniciativa/*  /iniciativa.html  200
+/iniciativa/*  /iniciativa-app.html  200
