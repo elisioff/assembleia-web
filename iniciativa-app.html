@@ -5,14 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Iniciativa - AssembLeia</title>
   <meta name="description" content="Vê esta iniciativa legislativa na app AssembLeia: proponentes, votações e resumo.">
-  <link rel="icon" type="image/png" href="icon.png?v=3">
-  <link rel="apple-touch-icon" href="icon.png?v=3">
-  <link rel="stylesheet" href="styles.css">
-  <!-- Generic preview (link crawlers don't run JS, so this stays app-branded). -->
+  <!-- Served at /iniciativa/:id, so every URL here must be root-absolute. -->
+  <link rel="icon" type="image/png" href="/icon.png?v=3">
+  <link rel="apple-touch-icon" href="/icon.png?v=3">
+  <link rel="stylesheet" href="/styles.css">
+  <!-- Generic fallback preview; functions/iniciativa/[id].js rewrites these
+       per initiative (link crawlers don't run JS). -->
   <meta property="og:title" content="AssembLeia">
   <meta property="og:description" content="Uma iniciativa da Assembleia da República, na app AssembLeia.">
-  <meta property="og:image" content="icon.png?v=3">
+  <meta property="og:image" content="https://assembleiaapp.com/icon.png?v=3">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="AssembLeia">
+  <meta name="twitter:card" content="summary">
   <style>
     .initiative { max-width: 640px; margin: 0 auto; }
     .initiative .meta { color: var(--muted, #667); font-size: .95rem; margin: .35rem 0 1rem; }
@@ -38,17 +42,17 @@
 <body>
   <header class="site-header">
     <div class="container">
-      <a class="brand" href="index.html">
+      <a class="brand" href="/">
         <picture>
-          <source srcset="icon-dark.png?v=2" media="(prefers-color-scheme: dark)">
-          <img src="icon.png?v=2" alt="" class="brand-mark" width="28" height="28">
+          <source srcset="/icon-dark.png?v=2" media="(prefers-color-scheme: dark)">
+          <img src="/icon.png?v=2" alt="" class="brand-mark" width="28" height="28">
         </picture>
         AssembLeia
       </a>
       <nav class="nav">
-        <a href="index.html">Início</a>
-        <a href="privacidade.html">Privacidade</a>
-        <a href="suporte.html">Suporte</a>
+        <a href="/">Início</a>
+        <a href="/privacidade.html">Privacidade</a>
+        <a href="/suporte.html">Suporte</a>
       </nav>
     </div>
   </header>
@@ -83,9 +87,9 @@
   <footer class="site-footer">
     <div class="container">
       <div class="footer-links">
-        <a href="index.html">Início</a>
-        <a href="privacidade.html">Privacidade</a>
-        <a href="suporte.html">Suporte</a>
+        <a href="/">Início</a>
+        <a href="/privacidade.html">Privacidade</a>
+        <a href="/suporte.html">Suporte</a>
       </div>
       <p>AssembLeia é uma aplicação <strong>não oficial</strong> e não tem qualquer afiliação com a Assembleia da República. Dados do portal de dados abertos do Parlamento (<a href="https://www.parlamento.pt">parlamento.pt</a>).</p>
       <p>© 2026 AssembLeia</p>
