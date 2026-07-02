@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iniciativa - AssembLeia</title>
+  <meta name="description" content="Vê esta iniciativa legislativa na app AssembLeia: proponentes, votações e resumo.">
+  <link rel="icon" type="image/png" href="icon.png?v=3">
+  <link rel="apple-touch-icon" href="icon.png?v=3">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Generic preview (link crawlers don't run JS, so this stays app-branded). -->
+  <meta property="og:title" content="AssembLeia">
+  <meta property="og:description" content="Uma iniciativa da Assembleia da República, na app AssembLeia.">
+  <meta property="og:image" content="icon.png?v=3">
+  <meta property="og:type" content="website">
+  <style>
+    .initiative { max-width: 640px; margin: 0 auto; }
+    .initiative .meta { color: var(--muted, #667); font-size: .95rem; margin: .35rem 0 1rem; }
+    .initiative .meta span + span::before { content: " · "; opacity: .5; }
+    .vote-badge {
+      display: inline-block; font-size: .8rem; font-weight: 600; padding: .18rem .6rem;
+      border-radius: 999px; margin-bottom: .6rem; color: #fff;
+    }
+    .vote-badge.ok { background: #149E8C; }
+    .vote-badge.no { background: #E06060; }
+    .vote-badge.neutral { background: #7a869a; }
+    .tema-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1rem 0; }
+    .tema-tag {
+      font-size: .8rem; padding: .2rem .6rem; border-radius: 999px;
+      background: rgba(20,158,140,.12); color: #0f7a6c;
+    }
+    @media (prefers-color-scheme: dark) { .tema-tag { color: #4fd1bf; } }
+    .initiative .summary { line-height: 1.6; }
+    .initiative-skeleton { opacity: .5; }
+    .open-note { margin-top: 1.5rem; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">
+        <picture>
+          <source srcset="icon-dark.png?v=2" media="(prefers-color-scheme: dark)">
+          <img src="icon.png?v=2" alt="" class="brand-mark" width="28" height="28">
+        </picture>
+        AssembLeia
+      </a>
+      <nav class="nav">
+        <a href="index.html">Início</a>
+        <a href="privacidade.html">Privacidade</a>
+        <a href="suporte.html">Suporte</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <article class="initiative" id="card">
+          <p class="initiative-skeleton">A carregar a iniciativa...</p>
+        </article>
+
+        <div class="initiative open-note section-center">
+          <p class="tagline">Vê esta iniciativa na app</p>
+          <p class="muted">Com a app AssembLeia abres a iniciativa com os proponentes, a cronologia e todas as votações, partido a partido.</p>
+          <div class="cta">
+            <span class="btn btn-disabled" aria-disabled="true">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3 13 11.7l2.6-2.6L5.2 3.2a1.6 1.6 0 0 0-1.6-.9zM2.8 3.5A1.6 1.6 0 0 0 2.6 4v16c0 .2 0 .4.2.5l9.3-9.3zM17 10.4l2.8 1.6c.9.5.9 1.5 0 2L17 15.6 14.2 13zM3.6 21.7l9.4-9.4 2.6 2.6-10.4 5.9c-.5.3-1.1.3-1.6-.1z"/></svg>
+              Android
+              <span class="btn-badge">Brevemente</span>
+            </span>
+            <a class="btn btn-primary" href="https://apps.apple.com/pt/app/assembleia/id6779358001">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              Descarregar para iOS
+            </a>
+          </div>
+          <p><span class="disclaimer-pill">App não oficial · sem afiliação com a Assembleia da República</span></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="index.html">Início</a>
+        <a href="privacidade.html">Privacidade</a>
+        <a href="suporte.html">Suporte</a>
+      </div>
+      <p>AssembLeia é uma aplicação <strong>não oficial</strong> e não tem qualquer afiliação com a Assembleia da República. Dados do portal de dados abertos do Parlamento (<a href="https://www.parlamento.pt">parlamento.pt</a>).</p>
+      <p>© 2026 AssembLeia</p>
+    </div>
+  </footer>
+
+  <script>
+    const SUPABASE_URL = "https://fnvtibybkxujurxrilfg.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_BAYxTO8BAW_WG1ng5zCnqg_uu8LqZDj";
+    const card = document.getElementById("card");
+
+    const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+    function voteBadge(r) {
+      if (!r) return "";
+      const low = r.toLowerCase();
+      const cls = low.includes("provad") ? "ok" : (low.includes("ejeit") ? "no" : "neutral");
+      return `<span class="vote-badge ${cls}">${esc(r)}</span>`;
+    }
+
+    function fmtDate(d) {
+      if (!d) return "";
+      const parsed = new Date(d);
+      if (isNaN(parsed)) return "";
+      return parsed.toLocaleDateString("pt-PT", { day: "numeric", month: "long", year: "numeric" });
+    }
+
+    function renderNotFound() {
+      card.innerHTML = `
+        <p class="tagline">Iniciativa</p>
+        <h1>Não conseguimos carregar esta iniciativa</h1>
+        <p class="muted">O link pode estar incorreto ou a iniciativa já não está disponível. Abre a app AssembLeia para procurar.</p>`;
+    }
+
+    async function load() {
+      const id = (location.pathname.match(/\/iniciativa\/(\d+)/) || [])[1];
+      if (!id) { renderNotFound(); return; }
+      try {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/iniciativas?id=eq.${id}&select=titulo,tipo,legislatura,data,resultado,summary,temas`,
+          { headers: { apikey: SUPABASE_KEY } }
+        );
+        const rows = await res.json();
+        const it = rows && rows[0];
+        if (!it) { renderNotFound(); return; }
+
+        document.title = `${it.titulo} - AssembLeia`;
+
+        const meta = [];
+        if (it.tipo) meta.push(`<span>${esc(it.tipo)}</span>`);
+        if (it.legislatura) meta.push(`<span>Legislatura ${esc(it.legislatura)}</span>`);
+        meta.push(`<span>#${esc(id)}</span>`);
+        const d = fmtDate(it.data);
+        if (d) meta.push(`<span>${esc(d)}</span>`);
+
+        const temas = Array.isArray(it.temas) && it.temas.length
+          ? `<div class="tema-tags">${it.temas.map((t) => `<span class="tema-tag">${esc(t)}</span>`).join("")}</div>`
+          : "";
+
+        const summary = it.summary
+          ? `<p class="summary">${esc(it.summary)}</p>`
+          : "";
+
+        card.innerHTML = `
+          ${voteBadge(it.resultado)}
+          <h1>${esc(it.titulo)}</h1>
+          <p class="meta">${meta.join("")}</p>
+          ${temas}
+          ${summary}`;
+      } catch (e) {
+        renderNotFound();
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>
