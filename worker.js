@@ -74,6 +74,11 @@ async function handleIniciativa(request, env, id) {
   let html = await page.text();
 
   if (id) {
+    // Smart App Banner: "Abrir" deep-links straight to this initiative.
+    html = html.replace(
+      '<meta name="apple-itunes-app" content="app-id=6779358001">',
+      `<meta name="apple-itunes-app" content="app-id=6779358001, app-argument=${SITE_URL}/iniciativa/${id}">`
+    );
     try {
       const it = await fetchInitiative(id);
       if (it && it.titulo) html = injectPreview(html, it, id);
