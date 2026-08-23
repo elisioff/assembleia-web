@@ -1,4 +1,5 @@
-// Worker entry point (see wrangler.jsonc): handles /iniciativa/:id.
+// Worker entry point (see wrangler.jsonc): handles /iniciativa/:id and
+// /deputado/:id.
 //
 // Devices with the app never reach this (universal/app link opens the app).
 // For everyone else — including link crawlers (iMessage, WhatsApp, etc.),
@@ -14,8 +15,8 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) =>
 
 // The asset layer answers .html paths with a clean-URL redirect, so follow
 // one hop manually.
-async function fetchPage(request, env) {
-  let res = await env.ASSETS.fetch(new URL("/iniciativa-app.html", request.url));
+async function fetchPage(request, env, page) {
+  let res = await env.ASSETS.fetch(new URL(page, request.url));
   if (res.status >= 300 && res.status < 400) {
     const location = res.headers.get("location");
     if (location) res = await env.ASSETS.fetch(new URL(location, request.url));
@@ -69,8 +70,87 @@ function injectPreview(html, it, id) {
     );
 }
 
+// The most recent mandato carries the party, the círculo and the deputy record.
+async function fetchDeputado(id) {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/mandatos?deputado_id=eq.${id}` +
+      `&select=legislatura,circulo_eleitoral,sigla_grupo_parlamentar,nome_parlamentar,deputados(nome_completo)`,
+    { headers: { apikey: SUPABASE_KEY } }
+  );
+  if (!res.ok) return null;
+  const rows = await res.json();
+  if (!Array.isArray(rows) || !rows.length) return null;
+  return rows.sort((a, b) => romanOrder(b.legislatura) - romanOrder(a.legislatura))[0];
+}
+
+// "XVII" → 17, so the newest term wins.
+function romanOrder(roman) {
+  const values = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+  let total = 0;
+  let previous = 0;
+  for (const ch of String(roman || "").toUpperCase().split("").reverse()) {
+    const v = values[ch];
+    if (!v) return 0;
+    total += v < previous ? -v : v;
+    previous = Math.max(previous, v);
+  }
+  return total;
+}
+
+function injectDeputadoPreview(html, m, id) {
+  const nome = m.nome_parlamentar || (m.deputados && m.deputados.nome_completo) || "Deputado";
+  const bits = [m.sigla_grupo_parlamentar, m.circulo_eleitoral].filter(Boolean).join(" · ");
+  const description = bits
+    ? `${bits} — na app AssembLeia.`
+    : "Um deputado da Assembleia da República, na app AssembLeia.";
+
+  return html
+    .replace("<title>Deputado - AssembLeia</title>", `<title>${esc(nome)} - AssembLeia</title>`)
+    .replace(
+      /<meta name="description" content="[^"]*">/,
+      `<meta name="description" content="${esc(description)}">`
+    )
+    .replace(
+      '<meta property="og:title" content="AssembLeia">',
+      `<meta property="og:title" content="${esc(nome)}">`
+    )
+    .replace(
+      /<meta property="og:description" content="[^"]*">/,
+      `<meta property="og:description" content="${esc(description)}">`
+    )
+    .replace(
+      '<meta property="og:type" content="website">',
+      `<meta property="og:type" content="website">\n  <meta property="og:url" content="${SITE_URL}/deputado/${esc(id)}">`
+    );
+}
+
+async function handleDeputado(request, env, id) {
+  const page = await fetchPage(request, env, "/deputado-app.html");
+  let html = await page.text();
+
+  if (id) {
+    html = html.replace(
+      '<meta name="apple-itunes-app" content="app-id=6779358001">',
+      `<meta name="apple-itunes-app" content="app-id=6779358001, app-argument=${SITE_URL}/deputado/${id}">`
+    );
+    try {
+      const m = await fetchDeputado(id);
+      if (m) html = injectDeputadoPreview(html, m, id);
+    } catch {
+      // Supabase hiccup: the generic page still renders and the client JS retries.
+    }
+  }
+
+  return new Response(html, {
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "public, max-age=300",
+    },
+  });
+}
+
 async function handleIniciativa(request, env, id) {
-  const page = await fetchPage(request, env);
+  const page = await fetchPage(request, env, "/iniciativa-app.html");
   let html = await page.text();
 
   if (id) {
@@ -118,11 +198,22 @@ async function handleDocumento(request, env, id) {
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
-    const match = pathname.match(/^\/iniciativa\/([^/]+)(\/documento)?\/?$/);
-    if (match && (request.method === "GET" || request.method === "HEAD")) {
-      const id = /^\d+$/.test(match[1]) ? match[1] : null;
-      return match[2] ? handleDocumento(request, env, id) : handleIniciativa(request, env, id);
+    const readOnly = request.method === "GET" || request.method === "HEAD";
+
+    const iniciativa = pathname.match(/^\/iniciativa\/([^/]+)(\/documento)?\/?$/);
+    if (iniciativa && readOnly) {
+      const id = /^\d+$/.test(iniciativa[1]) ? iniciativa[1] : null;
+      return iniciativa[2]
+        ? handleDocumento(request, env, id)
+        : handleIniciativa(request, env, id);
     }
+
+    const deputado = pathname.match(/^\/deputado\/([^/]+)\/?$/);
+    if (deputado && readOnly) {
+      const id = /^\d+$/.test(deputado[1]) ? deputado[1] : null;
+      return handleDeputado(request, env, id);
+    }
+
     return env.ASSETS.fetch(request);
   },
 };

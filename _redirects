@@ -4,3 +4,4 @@
 # The worker (worker.js, run_worker_first) normally handles /iniciativa/* before
 # assets; this rule is the fallback if the worker isn't attached.
 /iniciativa/*  /iniciativa-app  200
+/deputado/*    /deputado-app    200

@@ -5,6 +5,7 @@
         "appIDs": ["NUS8LWRM7Z.com.elisioff.AssembLeia"],
         "components": [
           { "/": "/iniciativa/*", "comment": "Initiative deep links" },
+          { "/": "/deputado/*", "comment": "Deputy deep links (favorite notifications)" },
           { "/": "/", "comment": "App home" }
         ]
       }

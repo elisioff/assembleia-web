@@ -10,6 +10,6 @@
     "binding": "ASSETS",
     // The worker only sees these routes; every other path is served straight
     // from the static assets (including the _redirects fallback).
-    "run_worker_first": ["/iniciativa/*"]
+    "run_worker_first": ["/iniciativa/*", "/deputado/*"]
   }
 }
