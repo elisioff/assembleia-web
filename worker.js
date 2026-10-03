@@ -1,5 +1,5 @@
-// Worker entry point (see wrangler.jsonc): handles /iniciativa/:id and
-// /deputado/:id.
+// Worker entry point (see wrangler.jsonc): handles /iniciativa/:id (plus its
+// /documento and /intervencao/:clip variants) and /deputado/:id.
 //
 // Devices with the app never reach this (universal/app link opens the app).
 // For everyone else — including link crawlers (iMessage, WhatsApp, etc.),
@@ -40,8 +40,28 @@ function truncate(text, max) {
   return clean.slice(0, max).replace(/\s+\S*$/, "") + "…";
 }
 
-function injectPreview(html, it, id) {
-  const title = truncate(it.titulo, 300);
+// One plenary speech, by its parlamento.pt clip key ("17-1-88-26"). Only used
+// to name the speaker in the link preview: the page itself stays the
+// initiative's, pointing to the app.
+async function fetchIntervencao(id, clip) {
+  const video = `https://av.parlamento.pt/videos/Plenary/${clip.split("-").join("/")}`;
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/intervencoes?iniciativa_id=eq.${id}` +
+      `&video_url=eq.${encodeURIComponent(video)}&select=orador_nome,gp,cargo,membro_governo&limit=1`,
+    { headers: { apikey: SUPABASE_KEY } }
+  );
+  if (!res.ok) return null;
+  const rows = await res.json();
+  return rows && rows[0] ? rows[0] : null;
+}
+
+function injectPreview(html, it, id, speech = null, path = `/iniciativa/${id}`) {
+  const speaker = speech && speech.orador_nome
+    ? speech.orador_nome + (speech.gp ? ` (${speech.gp})` : speech.membro_governo ? " (Governo)" : "")
+    : null;
+  const title = speaker
+    ? truncate(`${speaker} no debate: ${it.titulo}`, 300)
+    : truncate(it.titulo, 300);
   const bits = [it.tipo, it.resultado].filter(Boolean).join(" · ");
   const description = it.summary
     ? truncate(it.summary, 200)
@@ -66,7 +86,7 @@ function injectPreview(html, it, id) {
     )
     .replace(
       '<meta property="og:type" content="website">',
-      `<meta property="og:type" content="website">\n  <meta property="og:url" content="${SITE_URL}/iniciativa/${esc(id)}">`
+      `<meta property="og:type" content="website">\n  <meta property="og:url" content="${SITE_URL}${esc(path)}">`
     );
 }
 
@@ -149,19 +169,23 @@ async function handleDeputado(request, env, id) {
   });
 }
 
-async function handleIniciativa(request, env, id) {
+async function handleIniciativa(request, env, id, clip = null) {
   const page = await fetchPage(request, env, "/iniciativa-app.html");
   let html = await page.text();
 
   if (id) {
-    // Smart App Banner: "Abrir" deep-links straight to this initiative.
+    const path = clip ? `/iniciativa/${id}/intervencao/${clip}` : `/iniciativa/${id}`;
+    // Smart App Banner: "Abrir" deep-links straight to this initiative (or speech).
     html = html.replace(
       '<meta name="apple-itunes-app" content="app-id=6779358001">',
-      `<meta name="apple-itunes-app" content="app-id=6779358001, app-argument=${SITE_URL}/iniciativa/${id}">`
+      `<meta name="apple-itunes-app" content="app-id=6779358001, app-argument=${SITE_URL}${path}">`
     );
     try {
-      const it = await fetchInitiative(id);
-      if (it && it.titulo) html = injectPreview(html, it, id);
+      const [it, speech] = await Promise.all([
+        fetchInitiative(id),
+        clip ? fetchIntervencao(id, clip) : Promise.resolve(null),
+      ]);
+      if (it && it.titulo) html = injectPreview(html, it, id, speech, path);
     } catch {
       // Supabase hiccup: fall through to the generic page; the client JS retries.
     }
@@ -200,12 +224,17 @@ export default {
     const { pathname } = new URL(request.url);
     const readOnly = request.method === "GET" || request.method === "HEAD";
 
-    const iniciativa = pathname.match(/^\/iniciativa\/([^/]+)(\/documento)?\/?$/);
+    // /intervencao/:clip is a shared plenary speech: the app opens it; everyone
+    // else gets the initiative's page (pointing to the app), only the link
+    // preview names the speaker.
+    const iniciativa = pathname.match(
+      /^\/iniciativa\/([^/]+)(?:(\/documento)|\/intervencao\/(\d+(?:-\d+)+))?\/?$/
+    );
     if (iniciativa && readOnly) {
       const id = /^\d+$/.test(iniciativa[1]) ? iniciativa[1] : null;
       return iniciativa[2]
         ? handleDocumento(request, env, id)
-        : handleIniciativa(request, env, id);
+        : handleIniciativa(request, env, id, iniciativa[3] || null);
     }
 
     const deputado = pathname.match(/^\/deputado\/([^/]+)\/?$/);
