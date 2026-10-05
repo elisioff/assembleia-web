@@ -5,3 +5,6 @@
 # assets; this rule is the fallback if the worker isn't attached.
 /iniciativa/*  /iniciativa-app  200
 /deputado/*    /deputado-app    200
+# Digest notification links (/novidades?partido=…) are opened by the apps only;
+# a browser goes home. The worker answers this first; this is the fallback.
+/novidades     /                302

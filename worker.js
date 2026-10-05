@@ -237,6 +237,12 @@ export default {
         : handleIniciativa(request, env, id, iniciativa[3] || null);
     }
 
+    // /novidades?… is a digest notification's link, only ever opened by the
+    // apps. If one reaches a browser anyway, the home page points to the stores.
+    if (/^\/novidades\/?$/.test(pathname) && readOnly) {
+      return Response.redirect(new URL("/", request.url).toString(), 302);
+    }
+
     const deputado = pathname.match(/^\/deputado\/([^/]+)\/?$/);
     if (deputado && readOnly) {
       const id = /^\d+$/.test(deputado[1]) ? deputado[1] : null;
